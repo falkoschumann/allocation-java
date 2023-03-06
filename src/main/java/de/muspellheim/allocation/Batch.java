@@ -4,25 +4,32 @@ import java.time.LocalDate;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
+import lombok.AccessLevel;
 import lombok.Getter;
 import org.springframework.lang.Nullable;
 
-class Batch implements Comparable<Batch> {
+public class Batch implements Comparable<Batch> {
   @Getter
   private final String reference;
+
   @Getter
   private final String sku;
+
   @Getter
   @Nullable
   private final LocalDate eta;
+
+  @Getter(AccessLevel.MODULE)
   private final int purchasedQuantity;
+
+  @Getter(AccessLevel.MODULE)
   private final Set<OrderLine> allocations;
 
-  Batch(String ref, String sku, int qty) {
+  public Batch(String ref, String sku, int qty) {
     this(ref, sku, qty, null);
   }
 
-  Batch(String ref, String sku, int qty, @Nullable LocalDate eta) {
+  public Batch(String ref, String sku, int qty, @Nullable LocalDate eta) {
     this.reference = ref;
     this.sku = sku;
     this.eta = eta;
@@ -30,17 +37,17 @@ class Batch implements Comparable<Batch> {
     this.allocations = new LinkedHashSet<>();
   }
 
-  int getAllocatedQuantity() {
+  public int getAllocatedQuantity() {
     return allocations.stream()
       .mapToInt(OrderLine::qty)
       .sum();
   }
 
-  int getAvailableQuantity() {
+  public int getAvailableQuantity() {
     return purchasedQuantity - getAllocatedQuantity();
   }
 
-  void allocate(OrderLine line) {
+  public void allocate(OrderLine line) {
     if (!canAllocate(line)) {
       return;
     }
@@ -52,7 +59,7 @@ class Batch implements Comparable<Batch> {
     allocations.remove(line);
   }
 
-  boolean canAllocate(OrderLine line) {
+  public boolean canAllocate(OrderLine line) {
     return sku.equals(line.sku()) && getAvailableQuantity() >= line.qty();
   }
 
@@ -85,7 +92,7 @@ class Batch implements Comparable<Batch> {
   @Override
   public String toString() {
     return "Batch{" +
-      "reference='" + reference + '\'' +
-      '}';
+           "reference='" + reference + '\'' +
+           '}';
   }
 }

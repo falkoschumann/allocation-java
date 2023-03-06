@@ -18,7 +18,7 @@ class BatchesTests {
     assertEquals(18, batch.getAvailableQuantity(), "batch available quantity");
   }
 
-  Tuple<Batch, OrderLine> makeBatchAndLine(String sku, int batchQty, int lineQty) {
+  private Tuple<Batch, OrderLine> makeBatchAndLine(String sku, int batchQty, int lineQty) {
     return new Tuple<>(
       new Batch("batch-001", sku, batchQty, LocalDate.now()),
       new OrderLine("order-123", sku, lineQty)
@@ -61,6 +61,18 @@ class BatchesTests {
   }
 
   @Test
+  void allocationIsIdempotent() {
+    var batchAndLine = makeBatchAndLine("ANGULAR-DESK", 20, 2);
+    var batch = batchAndLine.first();
+    var line = batchAndLine.second();
+
+    batch.allocate(line);
+    batch.allocate(line);
+
+    assertEquals(18, batch.getAvailableQuantity(), "batch available quantity");
+  }
+
+  @Test
   void deallocate() {
     var batchAndLine = makeBatchAndLine("EXPENSIVE-FOOTSTOOL", 20, 2);
     var batch = batchAndLine.first();
@@ -81,17 +93,5 @@ class BatchesTests {
     batch.deallocate(unallocatedLine);
 
     assertEquals(20, batch.getAvailableQuantity(), "batch available quantity");
-  }
-
-  @Test
-  void allocationIsIdempotent() {
-    var batchAndLine = makeBatchAndLine("ANGULAR-DESK", 20, 2);
-    var batch = batchAndLine.first();
-    var line = batchAndLine.second();
-
-    batch.allocate(line);
-    batch.allocate(line);
-
-    assertEquals(18, batch.getAvailableQuantity(), "batch available quantity");
   }
 }
