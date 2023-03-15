@@ -15,7 +15,7 @@ class BatchesTests {
 
     batch.allocate(line);
 
-    assertEquals(18, batch.getAvailableQuantity(), "batch available quantity");
+    assertEquals(18, batch.getAvailableQuantity());
   }
 
   private Tuple<Batch, OrderLine> makeBatchAndLine(String sku, int batchQty, int lineQty) {
@@ -31,7 +31,7 @@ class BatchesTests {
     var largeBatch = batchAndLine.first();
     var smallLine = batchAndLine.second();
 
-    assertTrue(largeBatch.canAllocate(smallLine), "large batch can allocate small line");
+    assertTrue(largeBatch.canAllocate(smallLine));
   }
 
   @Test
@@ -40,7 +40,7 @@ class BatchesTests {
     var smallBatch = batchAndLine.first();
     var largeLine = batchAndLine.second();
 
-    assertFalse(smallBatch.canAllocate(largeLine), "small batch cannot allocate large line");
+    assertFalse(smallBatch.canAllocate(largeLine));
   }
 
   @Test
@@ -49,7 +49,7 @@ class BatchesTests {
     var largeBatch = batchAndLine.first();
     var smallLine = batchAndLine.second();
 
-    assertTrue(largeBatch.canAllocate(smallLine), "large batch can allocate small line");
+    assertTrue(largeBatch.canAllocate(smallLine));
   }
 
   @Test
@@ -57,7 +57,7 @@ class BatchesTests {
     var batch = new Batch("batch-001", "UNCOMFORTABLE-CHAIR", 100);
     var differentSkuLine = new OrderLine("order-123", "EXPENSIVE-TOASTER", 10);
 
-    assertFalse(batch.canAllocate(differentSkuLine), "batch cannot allocate differente SKU line");
+    assertFalse(batch.canAllocate(differentSkuLine));
   }
 
   @Test
@@ -69,7 +69,7 @@ class BatchesTests {
     batch.allocate(line);
     batch.allocate(line);
 
-    assertEquals(18, batch.getAvailableQuantity(), "batch available quantity");
+    assertEquals(18, batch.getAvailableQuantity());
   }
 
   @Test
@@ -81,7 +81,7 @@ class BatchesTests {
 
     batch.deallocate(line);
 
-    assertEquals(20, batch.getAvailableQuantity(), "batch available quantity");
+    assertEquals(20, batch.getAvailableQuantity());
   }
 
   @Test
@@ -92,6 +92,6 @@ class BatchesTests {
 
     batch.deallocate(unallocatedLine);
 
-    assertEquals(20, batch.getAvailableQuantity(), "batch available quantity");
+    assertEquals(20, batch.getAvailableQuantity());
   }
 }

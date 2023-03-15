@@ -8,7 +8,7 @@ public class Allocations {
       .sorted()
       .filter(b -> b.canAllocate(line))
       .findFirst()
-      .orElseThrow(() -> new OutOfStock("Out of stock for sku %s".formatted(line.sku())));
+      .orElseThrow(() -> new OutOfStock("Out of stock for sku %s".formatted(line.getSku())));
     batch.allocate(line);
     return batch.getReference();
   }

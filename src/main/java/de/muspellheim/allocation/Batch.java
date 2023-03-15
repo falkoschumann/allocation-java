@@ -6,24 +6,31 @@ import java.util.Objects;
 import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.lang.Nullable;
 
+@NoArgsConstructor
 public class Batch implements Comparable<Batch> {
-  @Getter
-  private final String reference;
+  @Getter(AccessLevel.PACKAGE)
+  @Setter(AccessLevel.PRIVATE)
+  private Long id;
 
   @Getter
-  private final String sku;
+  private String reference = "";
+
+  @Getter
+  private String sku = "";
 
   @Getter
   @Nullable
-  private final LocalDate eta;
+  private LocalDate eta;
 
-  @Getter(AccessLevel.MODULE)
-  private final int purchasedQuantity;
+  @Getter(AccessLevel.PACKAGE)
+  private int purchasedQuantity;
 
-  @Getter(AccessLevel.MODULE)
-  private final Set<OrderLine> allocations;
+  @Getter(AccessLevel.PACKAGE)
+  private Set<OrderLine> allocations = new LinkedHashSet<>();
 
   public Batch(String ref, String sku, int qty) {
     this(ref, sku, qty, null);
@@ -34,17 +41,20 @@ public class Batch implements Comparable<Batch> {
     this.sku = sku;
     this.eta = eta;
     this.purchasedQuantity = qty;
-    this.allocations = new LinkedHashSet<>();
   }
 
   public int getAllocatedQuantity() {
     return allocations.stream()
-      .mapToInt(OrderLine::qty)
+      .mapToInt(OrderLine::getQty)
       .sum();
   }
 
   public int getAvailableQuantity() {
     return purchasedQuantity - getAllocatedQuantity();
+  }
+
+  public boolean canAllocate(OrderLine line) {
+    return sku.equals(line.getSku()) && getAvailableQuantity() >= line.getQty();
   }
 
   public void allocate(OrderLine line) {
@@ -57,10 +67,6 @@ public class Batch implements Comparable<Batch> {
 
   public void deallocate(OrderLine line) {
     allocations.remove(line);
-  }
-
-  public boolean canAllocate(OrderLine line) {
-    return sku.equals(line.sku()) && getAvailableQuantity() >= line.qty();
   }
 
   @Override
@@ -77,6 +83,9 @@ public class Batch implements Comparable<Batch> {
 
   @Override
   public boolean equals(Object other) {
+    if (this == other) {
+      return true;
+    }
     if (!(other instanceof Batch b)) {
       return false;
     }
@@ -91,8 +100,6 @@ public class Batch implements Comparable<Batch> {
 
   @Override
   public String toString() {
-    return "Batch{" +
-           "reference='" + reference + '\'' +
-           '}';
+    return "Batch " + reference;
   }
 }
