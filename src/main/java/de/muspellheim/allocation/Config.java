@@ -7,6 +7,6 @@ import org.springframework.stereotype.Component;
 @Data
 @Component
 @ConfigurationProperties("allocation")
-class Config {
+public class Config {
   private String apiUrl;
 }
