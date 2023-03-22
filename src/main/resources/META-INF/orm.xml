@@ -7,7 +7,7 @@
     <table name="order_lines"/>
     <attributes>
       <id name="id">
-        <generated-value strategy="IDENTITY" />
+        <generated-value strategy="IDENTITY"/>
       </id>
       <basic name="orderId">
         <column name="order_id"/>
@@ -17,11 +17,29 @@
       </basic>
     </attributes>
   </entity>
+  <entity class="de.muspellheim.allocation.domain.Product" access="FIELD">
+    <table name="products"/>
+    <attributes>
+      <id name="sku"/>
+      <basic name="versionNumber">
+        <column name="version_number" nullable="false" column-definition="INTEGER DEFAULT 0"/>
+      </basic>
+      <!--
+      <version name="versionNumber"/>
+      -->
+      <one-to-many name="batches">
+        <join-column name="sku"/>
+        <cascade>
+          <cascade-all/>
+        </cascade>
+      </one-to-many>
+    </attributes>
+  </entity>
   <entity class="de.muspellheim.allocation.domain.Batch" access="FIELD">
     <table name="batches"/>
     <attributes>
       <id name="id">
-        <generated-value strategy="IDENTITY" />
+        <generated-value strategy="IDENTITY"/>
       </id>
       <basic name="purchasedQuantity">
         <column name="purchased_quantity" nullable="false"/>

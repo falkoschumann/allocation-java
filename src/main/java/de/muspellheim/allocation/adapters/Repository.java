@@ -1,12 +1,10 @@
 package de.muspellheim.allocation.adapters;
 
-import de.muspellheim.allocation.domain.Batch;
-import java.util.List;
+import de.muspellheim.allocation.domain.Product;
+import java.util.Optional;
 
 public interface Repository {
-  void add(Batch batch);
+  void add(Product product);
 
-  Batch get(String reference);
-
-  List<Batch> list();
+  Optional<Product> get(String sku);
 }

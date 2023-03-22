@@ -1,8 +1,9 @@
 package de.muspellheim.allocation.adapters;
 
-import de.muspellheim.allocation.domain.Batch;
+import de.muspellheim.allocation.domain.Product;
 import jakarta.persistence.EntityManager;
-import java.util.List;
+import jakarta.persistence.NoResultException;
+import java.util.Optional;
 
 public class JpaRepository implements Repository {
   private final EntityManager entityManager;
@@ -12,20 +13,21 @@ public class JpaRepository implements Repository {
   }
 
   @Override
-  public void add(Batch batch) {
-    entityManager.persist(batch);
+  public void add(Product product) {
+    entityManager.persist(product);
   }
 
   @Override
-  public Batch get(String reference) {
-    return entityManager
-        .createQuery("from Batch where reference=:reference", Batch.class)
-        .setParameter("reference", reference)
-        .getSingleResult();
-  }
-
-  @Override
-  public List<Batch> list() {
-    return entityManager.createQuery("from Batch", Batch.class).getResultList();
+  public Optional<Product> get(String sku) {
+    try {
+      var product =
+          entityManager
+              .createQuery("from Product where sku=:sku", Product.class)
+              .setParameter("sku", sku)
+              .getSingleResult();
+      return Optional.of(product);
+    } catch (NoResultException ignore) {
+      return Optional.empty();
+    }
   }
 }

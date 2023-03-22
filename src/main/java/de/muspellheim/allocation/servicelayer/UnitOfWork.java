@@ -5,7 +5,7 @@ import de.muspellheim.allocation.util.ContextManager;
 import lombok.Getter;
 
 public abstract class UnitOfWork implements ContextManager<UnitOfWork> {
-  @Getter protected Repository batches;
+  @Getter protected Repository products;
 
   public abstract void commit();
 

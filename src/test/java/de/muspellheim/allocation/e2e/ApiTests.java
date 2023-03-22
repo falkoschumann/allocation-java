@@ -1,5 +1,8 @@
 package de.muspellheim.allocation.e2e;
 
+import static de.muspellheim.allocation.RandomRefs.randomBatchRef;
+import static de.muspellheim.allocation.RandomRefs.randomOrderId;
+import static de.muspellheim.allocation.RandomRefs.randomSku;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -8,13 +11,7 @@ import de.muspellheim.allocation.domain.OrderLine;
 import de.muspellheim.allocation.entrypoints.AllocateResponse;
 import de.muspellheim.allocation.entrypoints.BatchDto;
 import de.muspellheim.allocation.entrypoints.ErrorMessageResponse;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.UUID;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,22 +27,11 @@ import org.springframework.web.client.RestTemplate;
 class ApiTests {
   @Autowired private Config config;
 
-  @Autowired private EntityManagerFactory entityManagerFactory;
-
-  private EntityManager entityManager;
-
   private RestTemplate rest;
-
-  private Set<Long> batchesAdded;
-  private Set<String> skusAdded;
 
   @BeforeEach
   void init() throws Exception {
     rest = new RestTemplate();
-    entityManager = entityManagerFactory.createEntityManager();
-    batchesAdded = new LinkedHashSet<>();
-    skusAdded = new LinkedHashSet<>();
-
     waitForWebAppToComeUp();
   }
 
@@ -66,9 +52,9 @@ class ApiTests {
   void happyPathReturns201AndAllocatedBatch() {
     var sku = randomSku();
     var otherSku = randomSku("other");
-    var earlyBatch = randomBatchref("1");
-    var laterBatch = randomBatchref("2");
-    var otherBatch = randomBatchref("3");
+    var earlyBatch = randomBatchRef("1");
+    var laterBatch = randomBatchRef("2");
+    var otherBatch = randomBatchRef("3");
     postToAddBatch(laterBatch, sku, 100, LocalDate.parse("2011-01-02"));
     postToAddBatch(earlyBatch, sku, 100, LocalDate.parse("2011-01-01"));
     postToAddBatch(otherBatch, otherSku, 100, null);
@@ -103,71 +89,8 @@ class ApiTests {
     var url = config.getApiUrl();
 
     var batch = new BatchDto(ref, sku, qty, eta);
-    var response =
-        rest.postForEntity("%s/add-batch".formatted(url), batch, AllocateResponse.class);
+    var response = rest.postForEntity("%s/add-batch".formatted(url), batch, AllocateResponse.class);
 
     assertEquals(HttpStatusCode.valueOf(201), response.getStatusCode());
-  }
-
-  private static String randomSku() {
-    return randomSku("");
-  }
-
-  private static String randomSku(String name) {
-    return "sku-%s-%s".formatted(name, randomSuffix());
-  }
-
-  private static String randomBatchref() {
-    return randomBatchref("");
-  }
-
-  private static String randomBatchref(String name) {
-    return "batch-%s-%s".formatted(name, randomSuffix());
-  }
-
-  private static String randomOrderId() {
-    return randomOrderId("");
-  }
-
-  private static String randomOrderId(String name) {
-    return "order-%s-%s".formatted(name, randomSuffix());
-  }
-
-  private static String randomSuffix() {
-    return UUID.randomUUID().toString().substring(0, 6);
-  }
-
-  @AfterEach
-  void tearDown() {
-    entityManager.getTransaction().begin();
-    for (var batchId : batchesAdded) {
-      entityManager
-          .createNativeQuery(
-              """
-          DELETE FROM allocations
-           WHERE batch_id=:batch_id
-          """)
-          .setParameter("batch_id", batchId)
-          .executeUpdate();
-      entityManager
-          .createNativeQuery(
-              """
-          DELETE FROM batches
-           WHERE id=:batch_id
-          """)
-          .setParameter("batch_id", batchId)
-          .executeUpdate();
-    }
-    for (var sku : skusAdded) {
-      entityManager
-          .createNativeQuery(
-              """
-          DELETE FROM order_lines
-           WHERE sku=:sku
-          """)
-          .setParameter("sku", sku)
-          .executeUpdate();
-    }
-    entityManager.getTransaction().commit();
   }
 }

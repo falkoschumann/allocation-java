@@ -6,7 +6,7 @@ class FakeUnitOfWork extends UnitOfWork {
   private boolean committed;
 
   FakeUnitOfWork() {
-    batches = new FakeRepository();
+    products = new FakeRepository();
   }
 
   boolean isCommitted() {

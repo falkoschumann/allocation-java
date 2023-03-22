@@ -1,33 +1,26 @@
 package de.muspellheim.allocation.unit;
 
 import de.muspellheim.allocation.adapters.Repository;
-import de.muspellheim.allocation.domain.Batch;
+import de.muspellheim.allocation.domain.Product;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 class FakeRepository implements Repository {
-  private final Set<Batch> batches = new LinkedHashSet<>();
+  private final Set<Product> products = new LinkedHashSet<>();
 
-  FakeRepository(Batch... batches) {
-    this.batches.addAll(List.of(batches));
+  FakeRepository(Product... products) {
+    this.products.addAll(List.of(products));
   }
 
   @Override
-  public void add(Batch batch) {
-    batches.add(batch);
+  public void add(Product product) {
+    products.add(product);
   }
 
   @Override
-  public Batch get(String reference) {
-    return batches.stream()
-      .filter(b -> b.getReference().equals(reference))
-      .findFirst()
-      .orElseThrow();
-  }
-
-  @Override
-  public List<Batch> list() {
-    return List.copyOf(batches);
+  public Optional<Product> get(String sku) {
+    return products.stream().filter(p -> sku.equals(p.getSku())).findFirst();
   }
 }

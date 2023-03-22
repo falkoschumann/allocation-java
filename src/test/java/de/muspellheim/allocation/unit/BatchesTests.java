@@ -21,13 +21,6 @@ class BatchesTests {
     assertEquals(18, batch.getAvailableQuantity());
   }
 
-  private Tuple<Batch, OrderLine> makeBatchAndLine(String sku, int batchQty, int lineQty) {
-    return new Tuple<>(
-      new Batch("batch-001", sku, batchQty, LocalDate.now()),
-      new OrderLine("order-123", sku, lineQty)
-    );
-  }
-
   @Test
   void canAllocateIfAvailableGreaterThanRequired() {
     var batchAndLine = makeBatchAndLine("ELEGANT-LAMP", 20, 2);
@@ -96,5 +89,12 @@ class BatchesTests {
     batch.deallocate(unallocatedLine);
 
     assertEquals(20, batch.getAvailableQuantity());
+  }
+
+  private Tuple<Batch, OrderLine> makeBatchAndLine(String sku, int batchQty, int lineQty) {
+    return new Tuple<>(
+      new Batch("batch-001", sku, batchQty, LocalDate.now()),
+      new OrderLine("order-123", sku, lineQty)
+    );
   }
 }

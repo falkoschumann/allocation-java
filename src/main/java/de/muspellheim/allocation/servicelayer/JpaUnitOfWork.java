@@ -30,7 +30,7 @@ public class JpaUnitOfWork extends UnitOfWork {
   public UnitOfWork enter() {
     entityManager = entityManagerFactory.createEntityManager();
     entityManager.getTransaction().begin();
-    batches = new JpaRepository(entityManager);
+    products = new JpaRepository(entityManager);
     return super.enter();
   }
 

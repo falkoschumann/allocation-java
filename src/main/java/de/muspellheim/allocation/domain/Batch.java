@@ -12,7 +12,7 @@ import lombok.ToString;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @EqualsAndHashCode(of = "reference")
 @ToString(of = "reference")
 public class Batch implements Comparable<Batch> {

@@ -1,13 +1,19 @@
 package de.muspellheim.allocation.integration;
 
+import static de.muspellheim.allocation.RandomRefs.randomBatchRef;
+import static de.muspellheim.allocation.RandomRefs.randomOrderId;
+import static de.muspellheim.allocation.RandomRefs.randomSku;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.muspellheim.allocation.domain.OrderLine;
 import de.muspellheim.allocation.servicelayer.JpaUnitOfWork;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.OptimisticLockException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +38,9 @@ class UowTests {
 
     uow.with(
         () -> {
-          var batch = uow.getBatches().get("batch1");
+          var product = uow.getProducts().get("HIPSTER-WORKBENCH").orElseThrow();
           var line = new OrderLine("o1", "HIPSTER-WORKBENCH", 10);
-          batch.allocate(line);
+          product.allocate(line);
           uow.commit();
         });
 
@@ -71,14 +77,84 @@ class UowTests {
     assertEquals(List.of(), rows);
   }
 
+  @Test
+  void concurrentUpdatesToVersionAreNotAllowed() throws Exception {
+    var sku = randomSku();
+    var batch = randomBatchRef();
+    var entityManager = entityManagerFactory.createEntityManager();
+    entityManager.getTransaction().begin();
+    insertBatch(entityManager, batch, sku, 100, null, 1);
+    entityManager.getTransaction().commit();
+
+    var order1 = randomOrderId("1");
+    var order2 = randomOrderId("2");
+    var exceptions = new ArrayList<Exception>();
+    Runnable tryToAllocateOrder1 = () -> tryToAllocate(order1, sku, exceptions);
+    Runnable tryToAllocateOrder2 = () -> tryToAllocate(order2, sku, exceptions);
+    var thread1 = new Thread(tryToAllocateOrder1);
+    var thread2 = new Thread(tryToAllocateOrder2);
+    thread1.start();
+    thread2.start();
+    thread1.join();
+    thread2.join();
+
+    var version =
+        entityManager
+            .createNativeQuery(
+                """
+                SELECT version_number
+                  FROM products
+                 WHERE sku=:sku
+                """)
+            .setParameter("sku", sku)
+            .getSingleResult();
+    assertEquals(2, version);
+    assertEquals(1, exceptions.size());
+    assertTrue(exceptions.get(0).getCause() instanceof OptimisticLockException);
+
+    var orders =
+        entityManager
+            .createNativeQuery(
+                """
+                SELECT order_id FROM allocations
+                  JOIN batches ON allocations.batch_id = batches.id
+                  JOIN order_lines ON allocations.orderline_id = order_lines.id
+                 WHERE order_lines.sku=:sku
+                """)
+            .setParameter("sku", sku)
+            .getResultList();
+    assertEquals(1, orders.size());
+    var uow = new JpaUnitOfWork(entityManagerFactory);
+    uow.with(() -> uow.getEntityManager().createNativeQuery("SELECT 1").getSingleResult());
+  }
+
   private void insertBatch(
       EntityManager entityManager, String ref, String sku, int qty, @Nullable LocalDate eta) {
+    insertBatch(entityManager, ref, sku, qty, eta, 1);
+  }
+
+  private void insertBatch(
+      EntityManager entityManager,
+      String ref,
+      String sku,
+      int qty,
+      @Nullable LocalDate eta,
+      int productVersion) {
     entityManager
         .createNativeQuery(
             """
-            INSERT INTO batches (reference, sku, purchased_quantity, eta)
-            VALUES (:ref, :sku, :qty, :eta)
+            INSERT INTO products (sku, version_number)
+            VALUES (:sku, :version)
             """)
+        .setParameter("sku", sku)
+        .setParameter("version", productVersion)
+        .executeUpdate();
+    entityManager
+        .createNativeQuery(
+            """
+        INSERT INTO batches (reference, sku, purchased_quantity, eta)
+        VALUES (:ref, :sku, :qty, :eta)
+        """)
         .setParameter("ref", ref)
         .setParameter("sku", sku)
         .setParameter("qty", qty)
@@ -109,5 +185,26 @@ class UowTests {
                 """)
             .setParameter("order_line_id", orderLineId)
             .getSingleResult();
+  }
+
+  private void tryToAllocate(String orderId, String sku, List<Exception> exceptions) {
+    var line = new OrderLine(orderId, sku, 10);
+    try {
+      var uow = new JpaUnitOfWork(entityManagerFactory);
+      uow.with(
+          () -> {
+            var product = uow.getProducts().get(sku).orElseThrow();
+            product.allocate(line);
+            try {
+              Thread.sleep(200);
+            } catch (InterruptedException e) {
+              throw new RuntimeException(e);
+            }
+            uow.commit();
+          });
+    } catch (Exception e) {
+      e.printStackTrace();
+      exceptions.add(e);
+    }
   }
 }

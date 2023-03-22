@@ -1,7 +1,6 @@
 package de.muspellheim.allocation.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -11,13 +10,25 @@ import org.junit.jupiter.api.Test;
 
 class ServicesTests {
   @Test
-  void addBatch() {
+  void addBatch_ForNewProduct() {
     var uow = new FakeUnitOfWork();
 
     Services.addBatch("b1", "CRUNCHY-ARMCHAIR", 100, null, uow);
 
-    assertNotNull(uow.getBatches().get("b1"));
+    assertTrue(uow.getProducts().get("CRUNCHY-ARMCHAIR").isPresent());
     assertTrue(uow.isCommitted());
+  }
+
+  @Test
+  void addBatch_ForExistingProduct() {
+    var uow = new FakeUnitOfWork();
+    Services.addBatch("b1", "GARISH-RUG", 100, null, uow);
+
+    Services.addBatch("b2", "GARISH-RUG", 99, null, uow);
+
+    assertTrue(
+        uow.getProducts().get("GARISH-RUG").orElseThrow().getBatches().stream()
+            .anyMatch(b -> "b2".equals(b.getReference())));
   }
 
   @Test
