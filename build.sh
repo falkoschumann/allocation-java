@@ -1,3 +1,7 @@
 #!/usr/bin/env bash
 
-./gradlew build
+task=$1
+case $task in
+  clean) ./gradlew clean ;;
+  *) ./gradlew build ;;
+esac
