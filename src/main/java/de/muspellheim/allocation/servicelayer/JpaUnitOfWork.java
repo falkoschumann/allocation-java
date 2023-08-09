@@ -1,29 +1,31 @@
 package de.muspellheim.allocation.servicelayer;
 
 import de.muspellheim.allocation.adapters.JpaRepository;
+import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
+import java.util.Objects;
 
 public class JpaUnitOfWork extends UnitOfWork {
   private final EntityManagerFactory entityManagerFactory;
-  private EntityManager entityManager;
+  @Nullable private EntityManager entityManager;
 
   public JpaUnitOfWork(EntityManagerFactory entityManagerFactory) {
     this.entityManagerFactory = entityManagerFactory;
   }
 
   public EntityManager getEntityManager() {
-    return entityManager;
+    return Objects.requireNonNull(entityManager);
   }
 
   @Override
   public void commit() {
-    entityManager.getTransaction().commit();
+    Objects.requireNonNull(entityManager).getTransaction().commit();
   }
 
   @Override
   public void rollback() {
-    entityManager.getTransaction().rollback();
+    Objects.requireNonNull(entityManager).getTransaction().rollback();
   }
 
   @Override
@@ -37,6 +39,6 @@ public class JpaUnitOfWork extends UnitOfWork {
   @Override
   public void exit() {
     super.exit();
-    entityManager.close();
+    Objects.requireNonNull(entityManager).close();
   }
 }
