@@ -19,11 +19,9 @@ jobs:
         env:
           POSTGRES_USER: allocation
           POSTGRES_PASSWORD: abc123
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+        ports:
+          - "54321:5432"
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
       - name: Checkout source code
@@ -31,11 +29,9 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
-          distribution: 'corretto'
+          java-version: "17"
+          distribution: "corretto"
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
       - name: Build
-        env:
-          SPRING_DATASOURCE_URL: "jdbc:postgresql://localhost:5432/allocation:"
         run: ./build.sh
