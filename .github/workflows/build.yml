@@ -37,5 +37,5 @@ jobs:
         uses: gradle/gradle-build-action@v2
       - name: Build
         env:
-          SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/allocation:"
+          SPRING_DATASOURCE_URL: "jdbc:postgresql://localhost:5432/allocation:"
         run: ./build.sh
