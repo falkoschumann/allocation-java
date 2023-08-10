@@ -19,7 +19,6 @@ jobs:
         env:
           POSTGRES_USER: allocation
           POSTGRES_PASSWORD: abc123
-          POSTGRES_PORT: 54321
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -37,4 +36,6 @@ jobs:
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
       - name: Build
+        env:
+          SPRING_DATASOURCE_URL: "jdbc:postgresql://postgres:5432/allocation:"
         run: ./build.sh
