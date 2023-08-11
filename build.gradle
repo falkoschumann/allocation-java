@@ -1,5 +1,6 @@
 plugins {
   id 'checkstyle'
+  id 'jacoco'
   id 'java'
   id 'com.diffplug.spotless' version '6.20.0'
   id 'org.springframework.boot' version '3.1.2'
@@ -59,6 +60,14 @@ test {
     events 'passed', 'skipped', 'failed'
     showExceptions = true
     exceptionFormat 'full'
+  }
+  finalizedBy jacocoTestReport
+}
+
+jacocoTestReport {
+  dependsOn test
+  reports {
+    xml.required = true
   }
 }
 
