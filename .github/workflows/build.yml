@@ -12,7 +12,6 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: node:lts
 
     services:
       postgres:
@@ -24,6 +23,8 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          - 5432:5432
 
     steps:
       - name: Checkout source code
@@ -33,7 +34,7 @@ jobs:
       - name: Connect to PostgreSQL
         run: node client.js
         env:
-          POSTGRES_HOST: postgres
+          POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
 #      - name: Set up Java
 #        uses: actions/setup-java@v3
