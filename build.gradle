@@ -33,10 +33,26 @@ dependencies {
   annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
   annotationProcessor 'org.projectlombok:lombok'
   testImplementation 'org.springframework.boot:spring-boot-starter-test'
+  testImplementation("org.junit.jupiter:junit-jupiter")
+  testRuntimeOnly("org.junit.platform:junit-platform-launcher")
   testRuntimeOnly 'com.h2database:h2'
 }
 
-tasks.named('test') {
+java {
+  sourceCompatibility = '17'
+  compileJava {
+    options.release = 17
+    options.encoding = 'utf-8'
+    options.compilerArgs.addAll(['-Xlint:all,-processing,-serial', '-Werror'])
+  }
+  compileTestJava {
+    options.release = 17
+    options.encoding = 'utf-8'
+    options.compilerArgs.addAll(['-Xlint:all,-processing,-serial', '-Werror'])
+  }
+}
+
+test {
   useJUnitPlatform()
   testLogging {
     events 'passed', 'skipped', 'failed'

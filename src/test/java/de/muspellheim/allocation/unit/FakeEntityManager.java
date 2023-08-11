@@ -155,11 +155,13 @@ class FakeEntityManager implements EntityManager {
   }
 
   @Override
+  @SuppressWarnings("rawtypes")
   public Query createQuery(CriteriaUpdate updateQuery) {
     throw new UnsupportedOperationException();
   }
 
   @Override
+  @SuppressWarnings("rawtypes")
   public Query createQuery(CriteriaDelete deleteQuery) {
     throw new UnsupportedOperationException();
   }
@@ -185,6 +187,7 @@ class FakeEntityManager implements EntityManager {
   }
 
   @Override
+  @SuppressWarnings("rawtypes")
   public Query createNativeQuery(String sqlString, Class resultClass) {
     throw new UnsupportedOperationException();
   }
@@ -205,6 +208,7 @@ class FakeEntityManager implements EntityManager {
   }
 
   @Override
+  @SuppressWarnings("rawtypes")
   public StoredProcedureQuery createStoredProcedureQuery(
       String procedureName, Class... resultClasses) {
     throw new UnsupportedOperationException();
