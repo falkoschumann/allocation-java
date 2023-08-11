@@ -34,7 +34,7 @@ class UowTests {
   @Autowired private EntityManagerFactory entityManagerFactory;
 
   @Test
-  void uowCanRetrieveABatchAndAllocateToIt() {
+  void uowCanRetrieveBatchAndAllocateToIt() {
     var entityManager = entityManagerFactory.createEntityManager();
     entityManager.getTransaction().begin();
     insertBatch(entityManager, "batch1", "HIPSTER-WORKBENCH", 100, null);

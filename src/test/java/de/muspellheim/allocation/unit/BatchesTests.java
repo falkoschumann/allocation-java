@@ -17,7 +17,7 @@ import org.junit.jupiter.api.Test;
 
 class BatchesTests {
   @Test
-  void allocatingToABatchReducesTheAvailableQuantity() {
+  void allocatingToBatchReducesTheAvailableQuantity() {
     var batch = new Batch("batch-001", "SMALL-TABLE", 20, LocalDate.now());
     var line = new OrderLine("order-ref", "SMALL-TABLE", 2);
 
