@@ -1,3 +1,8 @@
+/*
+ * Allocation
+ * Copyright (c) 2023 Falko Schumann <falko.schumann@muspellheim.de>
+ */
+
 package de.muspellheim.allocation.unit;
 
 import jakarta.persistence.EntityGraph;
@@ -51,7 +56,11 @@ class FakeEntityManager implements EntityManager {
   }
 
   @Override
-  public <T> T find(Class<T> entityClass, Object primaryKey, LockModeType lockMode, Map<String, Object> properties) {
+  public <T> T find(
+      Class<T> entityClass,
+      Object primaryKey,
+      LockModeType lockMode,
+      Map<String, Object> properties) {
     throw new UnsupportedOperationException();
   }
 
@@ -196,12 +205,14 @@ class FakeEntityManager implements EntityManager {
   }
 
   @Override
-  public StoredProcedureQuery createStoredProcedureQuery(String procedureName, Class... resultClasses) {
+  public StoredProcedureQuery createStoredProcedureQuery(
+      String procedureName, Class... resultClasses) {
     throw new UnsupportedOperationException();
   }
 
   @Override
-  public StoredProcedureQuery createStoredProcedureQuery(String procedureName, String... resultSetMappings) {
+  public StoredProcedureQuery createStoredProcedureQuery(
+      String procedureName, String... resultSetMappings) {
     throw new UnsupportedOperationException();
   }
 
@@ -283,8 +294,7 @@ class FakeEntityManager implements EntityManager {
     private boolean committed;
 
     @Override
-    public void begin() {
-    }
+    public void begin() {}
 
     @Override
     public void commit() {
@@ -292,8 +302,7 @@ class FakeEntityManager implements EntityManager {
     }
 
     @Override
-    public void rollback() {
-    }
+    public void rollback() {}
 
     @Override
     public void setRollbackOnly() {

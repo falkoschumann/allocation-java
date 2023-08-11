@@ -1,3 +1,8 @@
+/*
+ * Allocation
+ * Copyright (c) 2023 Falko Schumann <falko.schumann@muspellheim.de>
+ */
+
 package de.muspellheim.allocation.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -93,8 +98,7 @@ class BatchesTests {
 
   private Tuple<Batch, OrderLine> makeBatchAndLine(String sku, int batchQty, int lineQty) {
     return new Tuple<>(
-      new Batch("batch-001", sku, batchQty, LocalDate.now()),
-      new OrderLine("order-123", sku, lineQty)
-    );
+        new Batch("batch-001", sku, batchQty, LocalDate.now()),
+        new OrderLine("order-123", sku, lineQty));
   }
 }

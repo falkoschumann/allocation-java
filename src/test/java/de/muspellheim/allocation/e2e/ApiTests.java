@@ -1,3 +1,8 @@
+/*
+ * Allocation
+ * Copyright (c) 2023 Falko Schumann <falko.schumann@muspellheim.de>
+ */
+
 package de.muspellheim.allocation.e2e;
 
 import static de.muspellheim.allocation.RandomRefs.randomBatchRef;

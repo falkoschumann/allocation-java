@@ -1,6 +1,6 @@
 /*
  * Allocation
- * Copyright (c) 2023 Falko Schumann
+ * Copyright (c) 2023 Falko Schumann <falko.schumann@muspellheim.de>
  */
 
 package de.muspellheim.allocation;
