@@ -2,7 +2,7 @@ const {Client} = require('pg');
 
 const pgclient = new Client({
   host: 'localhost',
-  port: 54321,
+  port: 5432,
   user: 'allocation',
   password: 'abc123',
   database: 'allocation'
