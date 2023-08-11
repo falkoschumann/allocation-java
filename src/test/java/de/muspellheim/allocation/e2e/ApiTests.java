@@ -6,7 +6,6 @@ import static de.muspellheim.allocation.RandomRefs.randomSku;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import de.muspellheim.allocation.Config;
 import de.muspellheim.allocation.domain.OrderLine;
 import de.muspellheim.allocation.entrypoints.AllocateResponse;
 import de.muspellheim.allocation.entrypoints.BatchDto;
@@ -15,7 +14,7 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.lang.Nullable;
@@ -23,21 +22,25 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ApiTests {
-  @Autowired private Config config;
+
+  @Value(value = "${local.server.port}")
+  private int port;
 
   private RestTemplate rest;
 
+  private String url;
+
   @BeforeEach
   void init() throws Exception {
+    url = "http://localhost:" + port;
     rest = new RestTemplate();
     waitForWebAppToComeUp();
   }
 
   private void waitForWebAppToComeUp() throws InterruptedException {
     var deadline = System.currentTimeMillis() + 10_000;
-    var url = config.getApiUrl();
     while (System.currentTimeMillis() < deadline) {
       try {
         rest.getForObject(url, String.class);
@@ -59,7 +62,6 @@ class ApiTests {
     postToAddBatch(earlyBatch, sku, 100, LocalDate.parse("2011-01-01"));
     postToAddBatch(otherBatch, otherSku, 100, null);
     var data = new OrderLine(randomOrderId(), sku, 3);
-    var url = config.getApiUrl();
 
     var response = rest.postForEntity("%s/allocate".formatted(url), data, AllocateResponse.class);
 
@@ -72,7 +74,6 @@ class ApiTests {
     var unknownSku = randomSku();
     var orderId = randomOrderId();
     var data = new OrderLine(orderId, unknownSku, 20);
-    var url = config.getApiUrl();
 
     var response =
         assertThrows(
@@ -86,8 +87,6 @@ class ApiTests {
   }
 
   private void postToAddBatch(String ref, String sku, int qty, @Nullable LocalDate eta) {
-    var url = config.getApiUrl();
-
     var batch = new BatchDto(ref, sku, qty, eta);
     var response = rest.postForEntity("%s/add-batch".formatted(url), batch, AllocateResponse.class);
 
