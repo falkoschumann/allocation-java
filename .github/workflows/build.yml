@@ -12,16 +12,13 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: node
+    container: node:10.18-jessie
 
     services:
       postgres:
         image: postgres
         env:
-          POSTGRES_USER: allocation
-          POSTGRES_PASSWORD: abc123
-        ports:
-          - "5432:5432"
+          POSTGRES_PASSWORD: postgres
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -35,6 +32,9 @@ jobs:
         run: npm ci
       - name: Connect to PostgreSQL
         run: node client.js
+        env:
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: 5432
 #      - name: Set up Java
 #        uses: actions/setup-java@v3
 #        with:
