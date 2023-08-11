@@ -10,10 +10,25 @@ up:
 	docker-compose up -d app
 
 down:
-	docker-compose down --volumes
+	docker-compose down --remove-orphans
+
+test: up
+	./gradlew test
+
+unit-tests:
+	./gradlew test --tests "*unit*"
+
+integration-tests: up
+	./gradlew test --tests "*integration*"
+
+e2e-tests: up
+	./gradlew test --tests "*e2e*"
 
 logs:
 	docker-compose logs app | tail -100
 
-test:
-	./gradlew test
+clean:
+	./gradlew clean
+
+format:
+	./gradlew spotlessApply
