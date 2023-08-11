@@ -1,9 +1,9 @@
-FROM ghcr.io/graalvm/graalvm-ce:22 AS builder
+FROM ghcr.io/graalvm/graalvm-community AS builder
 WORKDIR /workspace
 COPY . /workspace
 RUN ./gradlew assemble
 
-FROM ghcr.io/graalvm/graalvm-ce:22
+FROM ghcr.io/graalvm/graalvm-community
 WORKDIR /app
 COPY --from=builder /workspace/build/libs/*.jar allocation.jar
 EXPOSE 8080
