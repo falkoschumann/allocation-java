@@ -11,7 +11,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.muspellheim.allocation.domain.Batch;
 import de.muspellheim.allocation.domain.OrderLine;
-import de.muspellheim.allocation.util.Tuple;
 import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
@@ -28,27 +27,24 @@ class BatchesTests {
 
   @Test
   void canAllocateIfAvailableGreaterThanRequired() {
-    var batchAndLine = makeBatchAndLine("ELEGANT-LAMP", 20, 2);
-    var largeBatch = batchAndLine.first();
-    var smallLine = batchAndLine.second();
+    var largeBatch = newBatch("ELEGANT-LAMP", 20);
+    var smallLine = newOrderLine("ELEGANT-LAMP", 2);
 
     assertTrue(largeBatch.canAllocate(smallLine));
   }
 
   @Test
   void cannotAllocateIfAvailableSmallerThanRequired() {
-    var batchAndLine = makeBatchAndLine("ELEGANT-LAMP", 2, 20);
-    var smallBatch = batchAndLine.first();
-    var largeLine = batchAndLine.second();
+    var smallBatch = newBatch("ELEGANT-LAMP", 2);
+    var largeLine = newOrderLine("ELEGANT-LAMP", 20);
 
     assertFalse(smallBatch.canAllocate(largeLine));
   }
 
   @Test
   void canAllocateIfAvailableEqualToRequired() {
-    var batchAndLine = makeBatchAndLine("ELEGANT-LAMP", 2, 2);
-    var largeBatch = batchAndLine.first();
-    var smallLine = batchAndLine.second();
+    var largeBatch = newBatch("ELEGANT-LAMP", 2);
+    var smallLine = newOrderLine("ELEGANT-LAMP", 2);
 
     assertTrue(largeBatch.canAllocate(smallLine));
   }
@@ -63,9 +59,8 @@ class BatchesTests {
 
   @Test
   void allocationIsIdempotent() {
-    var batchAndLine = makeBatchAndLine("ANGULAR-DESK", 20, 2);
-    var batch = batchAndLine.first();
-    var line = batchAndLine.second();
+    var batch = newBatch("ANGULAR-DESK", 20);
+    var line = newOrderLine("ANGULAR-DESK", 2);
 
     batch.allocate(line);
     batch.allocate(line);
@@ -75,9 +70,8 @@ class BatchesTests {
 
   @Test
   void deallocate() {
-    var batchAndLine = makeBatchAndLine("EXPENSIVE-FOOTSTOOL", 20, 2);
-    var batch = batchAndLine.first();
-    var line = batchAndLine.second();
+    var batch = newBatch("EXPENSIVE-FOOTSTOOL", 20);
+    var line = newOrderLine("EXPENSIVE-FOOTSTOOL", 2);
     batch.allocate(line);
 
     batch.deallocate(line);
@@ -87,18 +81,19 @@ class BatchesTests {
 
   @Test
   void canOnlyDeallocateAllocatedLines() {
-    var batchAndLine = makeBatchAndLine("DECORATIVE-TRINKET", 20, 2);
-    var batch = batchAndLine.first();
-    var unallocatedLine = batchAndLine.second();
+    var batch = newBatch("DECORATIVE-TRINKET", 20);
+    var unallocatedLine = newOrderLine("DECORATIVE-TRINKET", 2);
 
     batch.deallocate(unallocatedLine);
 
     assertEquals(20, batch.getAvailableQuantity());
   }
 
-  private Tuple<Batch, OrderLine> makeBatchAndLine(String sku, int batchQty, int lineQty) {
-    return new Tuple<>(
-        new Batch("batch-001", sku, batchQty, LocalDate.now()),
-        new OrderLine("order-123", sku, lineQty));
+  private static OrderLine newOrderLine(String sku, int lineQty) {
+    return new OrderLine("order-123", sku, lineQty);
+  }
+
+  private static Batch newBatch(String sku, int batchQty) {
+    return new Batch("batch-001", sku, batchQty, LocalDate.now());
   }
 }
