@@ -9,7 +9,8 @@ import de.muspellheim.allocation.adapters.Repository;
 import de.muspellheim.allocation.util.ContextManager;
 import lombok.Getter;
 
-public abstract class UnitOfWork implements ContextManager<UnitOfWork> {
+public abstract class UnitOfWork extends ContextManager<UnitOfWork> {
+
   @Getter protected Repository products;
 
   public abstract void commit();
@@ -17,12 +18,12 @@ public abstract class UnitOfWork implements ContextManager<UnitOfWork> {
   public abstract void rollback();
 
   @Override
-  public UnitOfWork enter() {
+  protected UnitOfWork enter() {
     return this;
   }
 
   @Override
-  public void exit() {
+  protected void exit() {
     rollback();
   }
 }
