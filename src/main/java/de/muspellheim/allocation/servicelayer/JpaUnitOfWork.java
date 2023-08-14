@@ -42,8 +42,9 @@ public class JpaUnitOfWork extends UnitOfWork {
   }
 
   @Override
-  public void exit() {
-    super.exit();
+  public boolean exit(Exception optionalException) {
+    var handled = super.exit(optionalException);
     Objects.requireNonNull(entityManager).close();
+    return handled;
   }
 }

@@ -23,7 +23,8 @@ public abstract class UnitOfWork extends ContextManager<UnitOfWork> {
   }
 
   @Override
-  protected void exit() {
+  protected boolean exit(Exception optionalException) {
     rollback();
+    return false;
   }
 }

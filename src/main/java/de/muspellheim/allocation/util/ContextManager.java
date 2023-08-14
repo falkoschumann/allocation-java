@@ -5,23 +5,24 @@
 
 package de.muspellheim.allocation.util;
 
-import java.util.function.Consumer;
-
 public abstract class ContextManager<T> {
 
   public void with(Runnable runnable) {
     enter();
-    runnable.run();
-    exit();
-  }
+    try {
+      runnable.run();
+    } catch (Exception e) {
+      if (exit(e)) {
+        // exception was handled
+        return;
+      }
 
-  public void with(Consumer<T> consumer) {
-    var context = enter();
-    consumer.accept(context);
-    exit();
+      throw e;
+    }
+    exit(null);
   }
 
   protected abstract T enter();
 
-  protected abstract void exit();
+  protected abstract boolean exit(Exception optionalException);
 }
