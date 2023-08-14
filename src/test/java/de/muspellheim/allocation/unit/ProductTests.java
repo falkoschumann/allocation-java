@@ -18,6 +18,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 class ProductTests {
+
   private LocalDate today;
   private LocalDate tomorrow;
   private LocalDate later;

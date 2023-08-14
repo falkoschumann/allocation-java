@@ -10,11 +10,10 @@ import de.muspellheim.allocation.domain.OrderLine;
 import de.muspellheim.allocation.domain.Product;
 import java.time.LocalDate;
 import java.util.concurrent.atomic.AtomicReference;
-import org.springframework.lang.Nullable;
 
 public class Services {
-  public static void addBatch(
-      String ref, String sku, int qty, @Nullable LocalDate eta, UnitOfWork uow) {
+
+  public static void addBatch(String ref, String sku, int qty, LocalDate eta, UnitOfWork uow) {
     uow.with(
         () -> {
           var product =

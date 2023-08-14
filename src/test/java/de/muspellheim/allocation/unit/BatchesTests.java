@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import org.junit.jupiter.api.Test;
 
 class BatchesTests {
+
   @Test
   void allocatingToBatchReducesTheAvailableQuantity() {
     var batch = new Batch("batch-001", "SMALL-TABLE", 20, LocalDate.now());
@@ -30,7 +31,9 @@ class BatchesTests {
     var largeBatch = newBatch("ELEGANT-LAMP", 20);
     var smallLine = newOrderLine("ELEGANT-LAMP", 2);
 
-    assertTrue(largeBatch.canAllocate(smallLine));
+    var result = largeBatch.canAllocate(smallLine);
+
+    assertTrue(result);
   }
 
   @Test
@@ -38,7 +41,9 @@ class BatchesTests {
     var smallBatch = newBatch("ELEGANT-LAMP", 2);
     var largeLine = newOrderLine("ELEGANT-LAMP", 20);
 
-    assertFalse(smallBatch.canAllocate(largeLine));
+    var result = smallBatch.canAllocate(largeLine);
+
+    assertFalse(result);
   }
 
   @Test
@@ -46,7 +51,9 @@ class BatchesTests {
     var largeBatch = newBatch("ELEGANT-LAMP", 2);
     var smallLine = newOrderLine("ELEGANT-LAMP", 2);
 
-    assertTrue(largeBatch.canAllocate(smallLine));
+    var result = largeBatch.canAllocate(smallLine);
+
+    assertTrue(result);
   }
 
   @Test
@@ -54,7 +61,9 @@ class BatchesTests {
     var batch = new Batch("batch-001", "UNCOMFORTABLE-CHAIR", 100);
     var differentSkuLine = new OrderLine("order-123", "EXPENSIVE-TOASTER", 10);
 
-    assertFalse(batch.canAllocate(differentSkuLine));
+    var result = batch.canAllocate(differentSkuLine);
+
+    assertFalse(result);
   }
 
   @Test

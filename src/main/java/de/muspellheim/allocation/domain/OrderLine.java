@@ -5,6 +5,7 @@
 
 package de.muspellheim.allocation.domain;
 
+import java.util.Objects;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import lombok.Value;
 @RequiredArgsConstructor
 @NoArgsConstructor(force = true)
 public class OrderLine {
+
   Long id;
   String orderId;
   String sku;
@@ -22,5 +24,7 @@ public class OrderLine {
 
   public OrderLine(String orderId, String sku, int qty) {
     this(null, orderId, sku, qty);
+    Objects.requireNonNull(orderId, "The orderId cannot be null.");
+    Objects.requireNonNull(sku, "The sku cannot be null.");
   }
 }

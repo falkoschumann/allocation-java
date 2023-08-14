@@ -7,6 +7,7 @@ package de.muspellheim.allocation.domain;
 
 import java.time.LocalDate;
 import java.util.LinkedHashSet;
+import java.util.Objects;
 import java.util.Set;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
@@ -14,34 +15,33 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.lang.NonNull;
-import org.springframework.lang.Nullable;
 
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
 @EqualsAndHashCode(of = "reference")
 @ToString(of = "reference")
 public class Batch implements Comparable<Batch> {
-  @Getter
+
   @Setter(AccessLevel.PRIVATE)
   private Long id;
 
-  @Getter private String reference = "";
+  private String reference = "";
 
-  @Getter private String sku = "";
+  private String sku = "";
 
-  @Getter @Nullable private LocalDate eta;
+  private LocalDate eta;
 
-  @Getter private int purchasedQuantity;
+  private int purchasedQuantity;
 
-  @Getter private final Set<OrderLine> allocations = new LinkedHashSet<>();
+  private final Set<OrderLine> allocations = new LinkedHashSet<>();
 
   public Batch(String ref, String sku, int qty) {
     this(ref, sku, qty, null);
   }
 
-  public Batch(String ref, String sku, int qty, @Nullable LocalDate eta) {
-    this.reference = ref;
-    this.sku = sku;
+  public Batch(String ref, String sku, int qty, LocalDate eta) {
+    this.reference = Objects.requireNonNull(ref, "The ref cannot be null.");
+    this.sku = Objects.requireNonNull(sku, "The sku cannot be null.");
     this.eta = eta;
     this.purchasedQuantity = qty;
   }
@@ -55,6 +55,7 @@ public class Batch implements Comparable<Batch> {
   }
 
   public boolean canAllocate(OrderLine line) {
+    Objects.requireNonNull(line, "The line cannot be null.");
     return sku.equals(line.getSku()) && getAvailableQuantity() >= line.getQty();
   }
 
@@ -69,7 +70,7 @@ public class Batch implements Comparable<Batch> {
   }
 
   @Override
-  public int compareTo(@NonNull Batch other) {
+  public int compareTo(Batch other) {
     if (eta == null) {
       return -1;
     }

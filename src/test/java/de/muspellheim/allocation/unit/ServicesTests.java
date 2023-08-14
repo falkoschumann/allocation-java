@@ -14,6 +14,7 @@ import de.muspellheim.allocation.servicelayer.Services;
 import org.junit.jupiter.api.Test;
 
 class ServicesTests {
+
   @Test
   void addBatch_ForNewProduct() {
     var uow = new FakeUnitOfWork();

@@ -8,13 +8,15 @@ package de.muspellheim.allocation.adapters;
 import de.muspellheim.allocation.domain.Product;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
+import java.util.Objects;
 import java.util.Optional;
 
 public class JpaRepository implements Repository {
+
   private final EntityManager entityManager;
 
   public JpaRepository(EntityManager entityManager) {
-    this.entityManager = entityManager;
+    this.entityManager = Objects.requireNonNull(entityManager, "The entityManager cannot be null.");
   }
 
   @Override

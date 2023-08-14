@@ -22,7 +22,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatusCode;
-import org.springframework.lang.Nullable;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
@@ -91,7 +90,7 @@ class ApiTests {
         response.getResponseBodyAs(ErrorMessageResponse.class));
   }
 
-  private void postToAddBatch(String ref, String sku, int qty, @Nullable LocalDate eta) {
+  private void postToAddBatch(String ref, String sku, int qty, LocalDate eta) {
     var batch = new BatchDto(ref, sku, qty, eta);
     var response = rest.postForEntity("%s/add-batch".formatted(url), batch, AllocateResponse.class);
 

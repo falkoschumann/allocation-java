@@ -6,17 +6,18 @@
 package de.muspellheim.allocation.servicelayer;
 
 import de.muspellheim.allocation.adapters.JpaRepository;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.Objects;
 
 public class JpaUnitOfWork extends UnitOfWork {
+
   private final EntityManagerFactory entityManagerFactory;
-  @Nullable private EntityManager entityManager;
+  private EntityManager entityManager;
 
   public JpaUnitOfWork(EntityManagerFactory entityManagerFactory) {
-    this.entityManagerFactory = entityManagerFactory;
+    this.entityManagerFactory =
+        Objects.requireNonNull(entityManagerFactory, "The entityManagerFactory cannot be null.");
   }
 
   public EntityManager getEntityManager() {
@@ -34,7 +35,7 @@ public class JpaUnitOfWork extends UnitOfWork {
   }
 
   @Override
-  public UnitOfWork enter() {
+  protected UnitOfWork enter() {
     entityManager = entityManagerFactory.createEntityManager();
     entityManager.getTransaction().begin();
     products = new JpaRepository(entityManager);
@@ -42,9 +43,9 @@ public class JpaUnitOfWork extends UnitOfWork {
   }
 
   @Override
-  public boolean exit(Exception optionalException) {
+  protected boolean exit(Exception optionalException) {
     var handled = super.exit(optionalException);
-    Objects.requireNonNull(entityManager).close();
+    entityManager.close();
     return handled;
   }
 }

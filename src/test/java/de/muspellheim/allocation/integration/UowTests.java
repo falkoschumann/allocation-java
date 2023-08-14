@@ -24,13 +24,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.lang.Nullable;
 import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest
 @Import(TestDbConfiguration.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class UowTests {
+
   @Autowired private EntityManagerFactory entityManagerFactory;
 
   @Test
@@ -134,7 +134,7 @@ class UowTests {
   }
 
   private void insertBatch(
-      EntityManager entityManager, String ref, String sku, int qty, @Nullable LocalDate eta) {
+      EntityManager entityManager, String ref, String sku, int qty, LocalDate eta) {
     insertBatch(entityManager, ref, sku, qty, eta, 1);
   }
 
@@ -143,7 +143,7 @@ class UowTests {
       String ref,
       String sku,
       int qty,
-      @Nullable LocalDate eta,
+      LocalDate eta,
       int productVersion) {
     entityManager
         .createNativeQuery(

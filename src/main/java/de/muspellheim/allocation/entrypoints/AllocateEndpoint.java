@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping
 public class AllocateEndpoint {
+
   private final EntityManagerFactory entityManagerFactory;
 
   public AllocateEndpoint(EntityManagerFactory entityManagerFactory) {

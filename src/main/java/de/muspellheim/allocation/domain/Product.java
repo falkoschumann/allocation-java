@@ -7,6 +7,7 @@ package de.muspellheim.allocation.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -14,12 +15,14 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
+@Getter
 @EqualsAndHashCode(of = "sku")
 @ToString(of = "sku")
 public class Product {
-  @Getter private String sku = "";
-  @Getter private List<Batch> batches = new ArrayList<>();
-  @Getter private int versionNumber;
+
+  private String sku = "";
+  private List<Batch> batches = new ArrayList<>();
+  private int versionNumber;
 
   public Product(String sku) {
     this(sku, new ArrayList<>());
@@ -30,12 +33,13 @@ public class Product {
   }
 
   public Product(String sku, List<Batch> batches, int versionNumber) {
-    this.sku = sku;
-    this.batches = batches;
+    this.sku = Objects.requireNonNull(sku, "The sku cannot be null.");
+    this.batches = Objects.requireNonNull(batches, "The batches cannot be null.");
     this.versionNumber = versionNumber;
   }
 
   public String allocate(OrderLine line) {
+    Objects.requireNonNull(line, "The line cannot be null.");
     var batch =
         batches.stream()
             .sorted()

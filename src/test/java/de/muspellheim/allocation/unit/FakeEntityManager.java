@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 
 class FakeEntityManager implements EntityManager {
+
   private final FakeEntityTransaction transaction = new FakeEntityTransaction();
 
   @Override

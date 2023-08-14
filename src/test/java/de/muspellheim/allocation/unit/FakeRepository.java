@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 class FakeRepository implements Repository {
+
   private final Set<Product> products = new LinkedHashSet<>();
 
   FakeRepository(Product... products) {

@@ -8,6 +8,7 @@ package de.muspellheim.allocation.unit;
 import de.muspellheim.allocation.servicelayer.UnitOfWork;
 
 class FakeUnitOfWork extends UnitOfWork {
+
   private boolean committed;
 
   FakeUnitOfWork() {
