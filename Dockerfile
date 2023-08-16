@@ -1,10 +1,10 @@
-FROM ghcr.io/graalvm/graalvm-community AS builder
+FROM ghcr.io/graalvm/graalvm-community:17 AS builder
 WORKDIR /workspace
 COPY . /workspace
 RUN ./gradlew assemble
 
-FROM ghcr.io/graalvm/graalvm-community
-WORKDIR /app
-COPY --from=builder /workspace/build/libs/*.jar allocation.jar
-EXPOSE 8080
-CMD java -jar allocation.jar
+FROM ghcr.io/graalvm/graalvm-community:17
+WORKDIR /workspace
+COPY . /workspace
+COPY --from=builder /workspace/build/libs/allocation.jar /app/allocation.jar
+CMD java -jar /app/allocation.jar

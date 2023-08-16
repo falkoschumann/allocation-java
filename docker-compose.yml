@@ -5,8 +5,17 @@ services:
   app:
     build:
       context: .
+      dockerfile: Dockerfile
     depends_on:
       - postgres
+    environment:
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_PASSWORD=abc123
+      - API_HOST=app
+      - API_PORT=8080
+    volumes:
+      - ./:/workspace
     ports:
       - "5005:8080"
 
