@@ -30,7 +30,7 @@ logs:
 	docker-compose logs app | tail -100
 
 clean:
-	docker-compose run --rm --no-deps --entrypoint=./gradlew app clean
+	./gradlew clean
 
 format:
-	docker-compose run --rm --no-deps --entrypoint=./gradlew app spotlessApply
+	./gradlew spotlessApply
