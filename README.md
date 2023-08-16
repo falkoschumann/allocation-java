@@ -1,3 +1,5 @@
+[![Build](https://github.com/falkoschumann/allocation-java/actions/workflows/build.yml/badge.svg)](https://github.com/falkoschumann/allocation-java/actions/workflows/build.yml)
+
 # Allocation
 
 Example of implementing architecture patterns.
