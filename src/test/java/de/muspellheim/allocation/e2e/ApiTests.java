@@ -64,7 +64,8 @@ class ApiTests {
     postToAddBatch(otherBatch, otherSku, 100, null);
     var data = new OrderLine(randomOrderId(), sku, 3);
 
-    var response = rest.postForEntity("%s/allocate".formatted(apiUrl), data, AllocateResponse.class);
+    var response =
+        rest.postForEntity("%s/allocate".formatted(apiUrl), data, AllocateResponse.class);
 
     assertEquals(HttpStatusCode.valueOf(201), response.getStatusCode());
     assertEquals(new AllocateResponse(earlyBatch), response.getBody());
@@ -79,7 +80,8 @@ class ApiTests {
     var response =
         assertThrows(
             HttpClientErrorException.class,
-            () -> rest.postForEntity("%s/allocate".formatted(apiUrl), data, AllocateResponse.class));
+            () ->
+                rest.postForEntity("%s/allocate".formatted(apiUrl), data, AllocateResponse.class));
 
     assertEquals(HttpStatusCode.valueOf(400), response.getStatusCode());
     Assertions.assertEquals(
@@ -89,7 +91,8 @@ class ApiTests {
 
   private void postToAddBatch(String ref, String sku, int qty, LocalDate eta) {
     var batch = new BatchDto(ref, sku, qty, eta);
-    var response = rest.postForEntity("%s/add-batch".formatted(apiUrl), batch, AllocateResponse.class);
+    var response =
+        rest.postForEntity("%s/add-batch".formatted(apiUrl), batch, AllocateResponse.class);
 
     assertEquals(HttpStatusCode.valueOf(201), response.getStatusCode());
   }
