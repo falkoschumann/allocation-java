@@ -1,7 +1,8 @@
 FROM ghcr.io/graalvm/graalvm-community:17 AS builder
 WORKDIR /workspace
 COPY . /workspace
-RUN ./gradlew assemble
+ENV SKIP_TESTS=e2e
+RUN ./gradlew build
 
 FROM ghcr.io/graalvm/graalvm-community:17
 WORKDIR /workspace
