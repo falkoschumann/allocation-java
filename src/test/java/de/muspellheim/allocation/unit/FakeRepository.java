@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-class FakeRepository implements Repository {
+class FakeRepository extends Repository {
 
   private final Set<Product> products = new LinkedHashSet<>();
 
@@ -21,12 +21,12 @@ class FakeRepository implements Repository {
   }
 
   @Override
-  public void add(Product product) {
+  protected void doAdd(Product product) {
     products.add(product);
   }
 
   @Override
-  public Optional<Product> get(String sku) {
+  protected Optional<Product> doGet(String sku) {
     return products.stream().filter(p -> sku.equals(p.getSku())).findFirst();
   }
 }

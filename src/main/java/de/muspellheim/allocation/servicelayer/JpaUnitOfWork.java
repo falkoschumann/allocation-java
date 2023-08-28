@@ -9,29 +9,27 @@ import de.muspellheim.allocation.adapters.JpaRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import java.util.Objects;
+import lombok.Getter;
 
 public class JpaUnitOfWork extends UnitOfWork {
 
   private final EntityManagerFactory entityManagerFactory;
-  private EntityManager entityManager;
+
+  @Getter private EntityManager entityManager;
 
   public JpaUnitOfWork(EntityManagerFactory entityManagerFactory) {
     this.entityManagerFactory =
         Objects.requireNonNull(entityManagerFactory, "The entityManagerFactory cannot be null.");
   }
 
-  public EntityManager getEntityManager() {
-    return Objects.requireNonNull(entityManager);
-  }
-
   @Override
-  public void commit() {
-    Objects.requireNonNull(entityManager).getTransaction().commit();
+  protected void doCommit() {
+    entityManager.getTransaction().commit();
   }
 
   @Override
   public void rollback() {
-    Objects.requireNonNull(entityManager).getTransaction().rollback();
+    entityManager.getTransaction().rollback();
   }
 
   @Override

@@ -9,6 +9,7 @@ import de.muspellheim.allocation.domain.Batch;
 import de.muspellheim.allocation.domain.OrderLine;
 import de.muspellheim.allocation.domain.Product;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Services {
@@ -30,9 +31,9 @@ public class Services {
         });
   }
 
-  public static String allocate(String orderId, String sku, int qty, UnitOfWork uow) {
+  public static Optional<String> allocate(String orderId, String sku, int qty, UnitOfWork uow) {
     var line = new OrderLine(orderId, sku, qty);
-    var batchRef = new AtomicReference<String>();
+    var batchRef = new AtomicReference<Optional<String>>();
     uow.with(
         () -> {
           var product =

@@ -12,11 +12,9 @@ import java.util.Set;
 import lombok.AccessLevel;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter
 @EqualsAndHashCode(of = "reference")
 @ToString(of = "reference")
@@ -25,15 +23,15 @@ public class Batch implements Comparable<Batch> {
   @Setter(AccessLevel.PRIVATE)
   private Long id;
 
-  private String reference = "";
-
-  private String sku = "";
-
-  private LocalDate eta;
-
-  private int purchasedQuantity;
-
+  private final String reference;
+  private final String sku;
+  private final LocalDate eta;
+  private final int purchasedQuantity;
   private final Set<OrderLine> allocations = new LinkedHashSet<>();
+
+  protected Batch() {
+    this("", "", 0);
+  }
 
   public Batch(String ref, String sku, int qty) {
     this(ref, sku, qty, null);

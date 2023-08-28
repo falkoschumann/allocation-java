@@ -11,7 +11,7 @@ import jakarta.persistence.NoResultException;
 import java.util.Objects;
 import java.util.Optional;
 
-public class JpaRepository implements Repository {
+public class JpaRepository extends Repository {
 
   private final EntityManager entityManager;
 
@@ -20,12 +20,12 @@ public class JpaRepository implements Repository {
   }
 
   @Override
-  public void add(Product product) {
+  protected void doAdd(Product product) {
     entityManager.persist(product);
   }
 
   @Override
-  public Optional<Product> get(String sku) {
+  protected Optional<Product> doGet(String sku) {
     try {
       var product =
           entityManager

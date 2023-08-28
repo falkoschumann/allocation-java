@@ -6,7 +6,6 @@
 package de.muspellheim.allocation.entrypoints;
 
 import de.muspellheim.allocation.domain.OrderLine;
-import de.muspellheim.allocation.domain.OutOfStock;
 import de.muspellheim.allocation.servicelayer.InvalidSku;
 import de.muspellheim.allocation.servicelayer.JpaUnitOfWork;
 import de.muspellheim.allocation.servicelayer.Services;
@@ -42,8 +41,8 @@ public class AllocateEndpoint {
       var uow = new JpaUnitOfWork(entityManagerFactory);
       var batchref = Services.allocate(line.getOrderId(), line.getSku(), line.getQty(), uow);
       response.setStatus(HttpServletResponse.SC_CREATED);
-      return new AllocateResponse(batchref);
-    } catch (OutOfStock | InvalidSku e) {
+      return new AllocateResponse(batchref.get());
+    } catch (InvalidSku e) {
       response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
       return new ErrorMessageResponse(e.getMessage());
     }

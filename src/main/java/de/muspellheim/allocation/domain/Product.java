@@ -5,24 +5,28 @@
 
 package de.muspellheim.allocation.domain;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import lombok.AccessLevel;
+import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-@NoArgsConstructor(force = true, access = AccessLevel.PROTECTED)
 @Getter
 @EqualsAndHashCode(of = "sku")
 @ToString(of = "sku")
 public class Product {
 
-  private String sku = "";
-  private List<Batch> batches = new ArrayList<>();
+  private final String sku;
+  private final List<Batch> batches;
   private int versionNumber;
+  private final ArrayDeque<Event> events = new ArrayDeque<>();
+
+  protected Product() {
+    this("");
+  }
 
   public Product(String sku) {
     this(sku, new ArrayList<>());
@@ -38,16 +42,17 @@ public class Product {
     this.versionNumber = versionNumber;
   }
 
-  public String allocate(OrderLine line) {
+  public Optional<String> allocate(OrderLine line) {
     Objects.requireNonNull(line, "The line cannot be null.");
-    var batch =
-        batches.stream()
-            .sorted()
-            .filter(b -> b.canAllocate(line))
-            .findFirst()
-            .orElseThrow(() -> new OutOfStock("Out of stock for sku %s".formatted(line.getSku())));
+    var optionalBatch = batches.stream().sorted().filter(b -> b.canAllocate(line)).findFirst();
+    if (optionalBatch.isEmpty()) {
+      events.offer(new OutOfStock(line.getSku()));
+      return Optional.empty();
+    }
+
+    var batch = optionalBatch.get();
     batch.allocate(line);
     versionNumber += 1;
-    return batch.getReference();
+    return Optional.ofNullable(batch.getReference());
   }
 }

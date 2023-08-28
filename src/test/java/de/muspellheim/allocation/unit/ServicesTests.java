@@ -8,9 +8,12 @@ package de.muspellheim.allocation.unit;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mockStatic;
 
+import de.muspellheim.allocation.adapters.Email;
 import de.muspellheim.allocation.servicelayer.InvalidSku;
 import de.muspellheim.allocation.servicelayer.Services;
+import java.util.Optional;
 import org.junit.jupiter.api.Test;
 
 class ServicesTests {
@@ -44,7 +47,7 @@ class ServicesTests {
 
     var result = Services.allocate("o1", "COMPLICATED-LAMP", 10, uow);
 
-    assertEquals("batch1", result);
+    assertEquals(Optional.of("batch1"), result);
   }
 
   @Test
@@ -65,5 +68,20 @@ class ServicesTests {
     Services.allocate("o1", "OMINOUS-MIRROR", 10, uow);
 
     assertTrue(uow.isCommitted());
+  }
+
+  @Test
+  void sendsEmailOnOutOfStockError() {
+    var uow = new FakeUnitOfWork();
+    Services.addBatch("b1", "POPULAR-CURTAINS", 9, null, uow);
+    try (var mockSendMail = mockStatic(Email.class)) {
+      uow.with(
+          () -> {
+            Services.allocate("o1", "POPULAR-CURTAINS", 10, uow);
+
+            mockSendMail.verify(
+                () -> Email.sendMail("stock@made.com", "Out of stock for POPULAR-CURTAINS"));
+          });
+    }
   }
 }

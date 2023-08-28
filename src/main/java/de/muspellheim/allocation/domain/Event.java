@@ -5,4 +5,4 @@
 
 package de.muspellheim.allocation.domain;
 
-public record OutOfStock(String sku) implements Event {}
+public interface Event {}

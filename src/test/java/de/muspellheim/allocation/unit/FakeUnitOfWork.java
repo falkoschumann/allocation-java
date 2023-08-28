@@ -20,7 +20,7 @@ class FakeUnitOfWork extends UnitOfWork {
   }
 
   @Override
-  public void commit() {
+  protected void doCommit() {
     committed = true;
   }
 

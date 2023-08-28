@@ -6,7 +6,7 @@
 package de.muspellheim.allocation.unit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import de.muspellheim.allocation.domain.Batch;
 import de.muspellheim.allocation.domain.OrderLine;
@@ -14,6 +14,7 @@ import de.muspellheim.allocation.domain.OutOfStock;
 import de.muspellheim.allocation.domain.Product;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -67,17 +68,20 @@ class ProductTests {
 
     var allocation = product.allocate(line);
 
-    assertEquals(inStockBatch.getReference(), allocation);
+    assertTrue(allocation.isPresent());
+    assertEquals(inStockBatch.getReference(), allocation.get());
   }
 
   @Test
-  void throwsOutOfStockExceptionIfCannotAllocate() {
+  void recordsOutOfStockEventIfCannotAllocate() {
     var batch = new Batch("batch1", "SMALL-FORK", 10, today);
     var product = new Product("SMALL-FORK", List.of(batch));
     product.allocate(new OrderLine("order1", "SMALL-FORK", 10));
 
-    assertThrows(
-        OutOfStock.class, () -> product.allocate(new OrderLine("order2", "SMALL-FORK", 1)));
+    var allocation = product.allocate(new OrderLine("order2", "SMALL-FORK", 1));
+
+    assertEquals(new OutOfStock("SMALL-FORK"), product.getEvents().getLast());
+    assertEquals(Optional.empty(), allocation);
   }
 
   @Test

@@ -33,6 +33,7 @@
           <cascade-all/>
         </cascade>
       </one-to-many>
+      <transient name="events"/>
     </attributes>
   </entity>
   <entity class="de.muspellheim.allocation.domain.Batch" access="FIELD">

@@ -6,11 +6,28 @@
 package de.muspellheim.allocation.adapters;
 
 import de.muspellheim.allocation.domain.Product;
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
+import lombok.Getter;
 
-public interface Repository {
+@Getter
+public abstract class Repository {
 
-  void add(Product product);
+  private final Set<Product> seen = new LinkedHashSet<>();
 
-  Optional<Product> get(String sku);
+  public final void add(Product product) {
+    doAdd(product);
+    seen.add(product);
+  }
+
+  public final Optional<Product> get(String sku) {
+    var product = doGet(sku);
+    product.ifPresent(seen::add);
+    return product;
+  }
+
+  protected abstract void doAdd(Product product);
+
+  protected abstract Optional<Product> doGet(String sku);
 }

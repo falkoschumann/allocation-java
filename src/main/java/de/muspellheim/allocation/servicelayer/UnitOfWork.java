@@ -9,11 +9,26 @@ import de.muspellheim.allocation.adapters.Repository;
 import de.muspellheim.allocation.util.ContextManager;
 import lombok.Getter;
 
+@Getter
 public abstract class UnitOfWork extends ContextManager<UnitOfWork> {
 
-  @Getter protected Repository products;
+  protected Repository products;
 
-  public abstract void commit();
+  public final void commit() {
+    doCommit();
+    publishEvents();
+  }
+
+  private void publishEvents() {
+    for (var product : products.getSeen()) {
+      while (!product.getEvents().isEmpty()) {
+        var event = product.getEvents().poll();
+        MessageBus.handle(event);
+      }
+    }
+  }
+
+  protected abstract void doCommit();
 
   public abstract void rollback();
 
