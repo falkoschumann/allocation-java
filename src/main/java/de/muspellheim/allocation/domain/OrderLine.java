@@ -18,6 +18,10 @@ public class OrderLine {
   String sku;
   int qty;
 
+  protected OrderLine() {
+    this("", "", 0);
+  }
+
   public OrderLine(String orderId, String sku, int qty) {
     this(null, orderId, sku, qty);
   }
